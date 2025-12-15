@@ -1,0 +1,9 @@
+{
+  "name": "Dictation App",
+  "description": "Let Gemini turn your messy audio recordings into clean, perfectly structured notes.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ],
+  "prompt": ""
+}

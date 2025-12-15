@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orbits Meeting</title>
+    <link rel="stylesheet" href="/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@^0.8.0",
+          "marked": "https://esm.sh/marked@^4.0.0",
+          "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Main Video Surface (Host View) -->
+    <div class="video-surface">
+      <div class="participant-label">Host: Jane Smith</div>
+      
+      <!-- User Self-View (WebRTC) -->
+      <div class="self-view-container">
+        <video id="selfVideo" autoplay playsinline muted></video>
+        <div class="participant-label-small">You</div>
+      </div>
+
+      <!-- The Transcription Widget (Floating Overlay) -->
+      <div id="transcriptionWidget" class="orbits-widget hidden">
+        
+        <!-- Header -->
+        <div class="widget-header">
+            <div class="brand-small">
+                <span class="dot-live"></span> Live Captions
+            </div>
+            <button id="settingsToggle" class="icon-btn-small" title="Settings">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+        </div>
+
+        <!-- Settings -->
+        <div id="settingsPanel" class="settings-panel">
+            <div class="setting-row">
+                <label>Source</label>
+                <div class="pill-selector">
+                    <button class="pill-btn active" data-source="mic">Mic</button>
+                    <button class="pill-btn" data-source="tab">System</button>
+                </div>
+            </div>
+            <div class="setting-row">
+                <label>Lang</label>
+                <select id="languageSelect" class="clean-select">
+                    <option value="auto" selected>Auto</option>
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="ja">Japanese</option>
+                    <option value="zh">Chinese</option>
+                    <option value="hi">Hindi</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Text Area (Restricted to 2 lines) -->
+        <div id="captionContainer" class="caption-container">
+            <div id="captionContent" class="caption-content">
+                <span class="placeholder-text">Listening...</span>
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Control Bar -->
+    <div class="control-bar">
+        <div class="controls-left">
+            <div class="control-item" id="btnMute">
+                <button class="control-btn"><i class="fas fa-microphone"></i></button>
+                <span>Mute</span>
+            </div>
+            <div class="control-item" id="btnVideo">
+                <button class="control-btn"><i class="fas fa-video"></i></button>
+                <span>Stop Video</span>
+            </div>
+        </div>
+
+        <div class="controls-center">
+            <div class="control-item haptic-btn">
+                <button class="control-btn"><i class="fas fa-shield-alt"></i></button>
+                <span>Security</span>
+            </div>
+            <div class="control-item haptic-btn">
+                <button class="control-btn"><i class="fas fa-user-friends"></i></button>
+                <span>Participants</span>
+            </div>
+            <div class="control-item haptic-btn">
+                <button class="control-btn"><i class="fas fa-share-square"></i></button>
+                <span>Share</span>
+            </div>
+            
+            <!-- Live Captions Toggle -->
+            <div class="control-item haptic-btn" id="captionsTrigger">
+                <button class="control-btn accent"><i class="fas fa-closed-captioning"></i></button>
+                <span>Live Captions</span>
+            </div>
+
+            <div class="control-item haptic-btn">
+                <button class="control-btn"><i class="fas fa-record-vinyl"></i></button>
+                <span>Record</span>
+            </div>
+             <div class="control-item haptic-btn">
+                <button class="control-btn"><i class="fas fa-smile"></i></button>
+                <span>Reactions</span>
+            </div>
+        </div>
+
+        <div class="controls-right">
+            <button class="end-btn haptic-btn">Leave</button>
+        </div>
+    </div>
+
+    <!-- Audio Element for Tab Audio Loopback -->
+    <video id="hiddenVideo" autoplay playsinline style="display:none;"></video>
+
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

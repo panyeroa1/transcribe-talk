@@ -1,0 +1,411 @@
+@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css);
+
+:root {
+  --bg-dark: #0f1014;
+  --surface-glass: rgba(20, 20, 20, 0.7);
+  --accent: #f94c57; 
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: #000;
+  background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: var(--text-primary);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Video Surface Layer */
+.video-surface {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+}
+
+.participant-label {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background: rgba(0,0,0,0.5);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+/* Self View (PIP) */
+.self-view-container {
+  position: absolute;
+  bottom: 100px;
+  right: 24px;
+  width: 240px;
+  height: 135px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 20;
+}
+
+#selfVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror effect */
+}
+
+.participant-label-small {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-size: 12px;
+  background: rgba(0,0,0,0.6);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* --- Floating Transcription Widget --- */
+.orbits-widget {
+  position: absolute;
+  bottom: 100px; /* Above control bar */
+  width: 600px; /* Wider for 2 lines */
+  max-width: 90%;
+  background: transparent; /* Text has background, widget is transparent */
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 30;
+  align-items: center;
+}
+
+.orbits-widget.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+/* Header (Settings access) */
+.widget-header {
+  opacity: 0; /* Hidden unless hovered/settings open */
+  transition: opacity 0.2s;
+  background: rgba(0,0,0,0.8);
+  border-radius: 20px;
+  padding: 4px 12px;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.orbits-widget:hover .widget-header,
+.orbits-widget.settings-open .widget-header {
+  opacity: 1;
+}
+
+.brand-small {
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot-live {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--accent);
+}
+
+.icon-btn-small {
+  background: transparent;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 4px;
+}
+.icon-btn-small:hover { color: white; }
+
+/* Settings Panel */
+.settings-panel {
+  background: rgba(20, 20, 20, 0.95);
+  width: 100%;
+  max-width: 300px; /* Constrain width */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.orbits-widget.settings-open .settings-panel {
+  max-height: 150px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pill-selector {
+  background: #333;
+  border-radius: 16px;
+  padding: 2px;
+  display: flex;
+}
+
+.pill-btn {
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+.pill-btn.active {
+  background: #555;
+  color: white;
+}
+
+.clean-select {
+  background: #333;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 6px;
+  padding: 4px;
+  font-size: 12px;
+}
+
+/* Caption Area - The Star of the Show */
+.caption-container {
+  /*Strict 2 lines height + padding approx */
+  height: auto; 
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+}
+
+.caption-content {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  
+  /* Flex magic to keep items at bottom */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.caption-line {
+    /* Subtle background as requested */
+    background-color: rgba(10, 10, 10, 0.5); 
+    padding: 6px 14px;
+    border-radius: 12px;
+    margin-top: 6px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    display: inline-block;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+    transform: translateY(10px);
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.streaming-segment {
+    /* Slightly distinct color for active typing */
+    color: #fff;
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.finalized-segment {
+    color: rgba(255,255,255,0.9);
+}
+
+.placeholder-text {
+  background: rgba(0,0,0,0.4);
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  font-style: italic;
+}
+
+/* --- Control Bar (Soft UI) --- */
+.control-bar {
+  height: 88px;
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 100;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.controls-left, .controls-right {
+  display: flex;
+  width: 200px;
+}
+.controls-right { justify-content: flex-end; }
+.controls-center {
+  display: flex;
+  gap: 16px;
+}
+
+.control-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  width: 72px;
+  transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.control-item:active {
+    transform: scale(0.92);
+}
+
+.control-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.05); /* Soft fill */
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #ddd;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-item:hover .control-btn {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Toggle States */
+.control-item.active-state .control-btn.accent {
+  background: #2ba640;
+  border-color: #2ba640;
+  color: white;
+  box-shadow: 0 0 15px rgba(43, 166, 64, 0.3);
+}
+
+.control-item.muted .control-btn {
+    background: #cc3333;
+    border-color: #cc3333;
+    color: white;
+}
+
+.control-item.video-off .control-btn {
+    background: #cc3333;
+    border-color: #cc3333;
+    color: white;
+    position: relative;
+}
+.control-item.video-off .control-btn::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 24px;
+    background: white;
+    transform: rotate(45deg);
+}
+.control-item.muted .control-btn::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 24px;
+    background: white;
+    transform: rotate(45deg);
+}
+
+
+.control-item span {
+  font-size: 11px;
+  color: #999;
+  font-weight: 500;
+}
+.control-item:hover span { color: #fff; }
+
+.end-btn {
+  background: #d93025;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(217, 48, 37, 0.3);
+}
+.end-btn:hover {
+  background: #ea4335;
+  transform: translateY(-1px);
+}
+.end-btn:active {
+    transform: scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .orbits-widget {
+    width: 95%;
+    bottom: 90px;
+  }
+  .controls-center { gap: 8px; }
+  .control-item { width: 56px; }
+  .control-btn { width: 36px; height: 36px; font-size: 16px; }
+  .controls-left, .controls-right { display: none; }
+  .control-bar { justify-content: center; }
+  .self-view-container {
+      width: 120px;
+      height: 68px;
+      bottom: 100px;
+      right: 12px;
+  }
+}
