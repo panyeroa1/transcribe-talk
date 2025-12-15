@@ -12,8 +12,8 @@ const SAMPLE_RATE = 16000;
 const LIVE_MODEL = 'gemini-2.5-flash-native-audio-preview-09-2025';
 
 // Supabase Configuration
-const SUPABASE_URL = 'https://xscdwdnjujpkczfhqrgu.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzY2R3ZG5qdWpwa2N6Zmhxcmd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEzMzEwNjgsImV4cCI6MjA3NjkwNzA2OH0.xuVAkWA5y1oDW_jC52I8JJXF-ovU-5LIBsY9yXzy6cA==';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 type AudioSourceType = 'mic' | 'tab';
@@ -203,7 +203,7 @@ class OrbitsTranscribe {
       this.virtualLastChar = '';
       this.dbBuffer = ''; // Reset DB buffer
 
-      const apiKey = process.env.API_KEY;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey) {
         alert('API Key is missing.');
         this.updateUIState('disconnected');
@@ -278,7 +278,7 @@ class OrbitsTranscribe {
         config: {
           responseModalities: [Modality.AUDIO], 
           inputAudioTranscription: {},
-          systemInstruction: systemInstruction,
+          systemInstruction: { parts: [{ text: systemInstruction }] },
         },
         callbacks: {
           onopen: () => {
@@ -327,7 +327,8 @@ class OrbitsTranscribe {
   }
 
   private handleSessionMessage(message: LiveServerMessage) {
-    const inputTranscript = message.serverContent?.inputTranscription;
+    const content = message.serverContent as any;
+    const inputTranscript = content?.inputTranscription;
     if (inputTranscript && inputTranscript.text) {
         // 1. Push to UI Queue
         this.queueText(inputTranscript.text);
