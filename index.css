@@ -160,7 +160,7 @@ body {
 }
 
 .orbits-widget.settings-open .settings-panel {
-  max-height: 150px;
+  max-height: 200px; /* Increased to fit visualizer */
   padding: 12px;
   border: 1px solid rgba(255,255,255,0.1);
 }
@@ -170,6 +170,12 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
+}
+
+#audioVisualizer {
+    background: #111;
+    border-radius: 6px;
+    border: 1px solid #333;
 }
 
 .pill-selector {
@@ -238,14 +244,31 @@ body {
     -webkit-box-decoration-break: clone;
     display: inline-block;
     backdrop-filter: blur(4px);
-    opacity: 0;
-    animation: fadeIn 0.3s forwards;
-    transform: translateY(10px);
     border: 1px solid rgba(255,255,255,0.03);
+
+    /* Smooth Entry/Exit Transitions */
+    transition: opacity 0.4s ease, transform 0.4s ease, max-height 0.4s ease, margin 0.4s ease, padding 0.4s ease;
+    max-height: 200px; /* Sufficient max-height to allow growth */
+    overflow: hidden;
+    transform: translateY(0);
+    opacity: 1;
 }
 
-@keyframes fadeIn {
-    to { opacity: 1; transform: translateY(0); }
+/* State: Just created, about to grow */
+.caption-line.entering {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* State: Leaving */
+.caption-line.exiting {
+    opacity: 0;
+    transform: translateY(-20px);
+    /* We don't collapse height for exit to prevent jumpiness, we just fade it up and out */
 }
 
 .streaming-segment {
